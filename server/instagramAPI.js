@@ -82,14 +82,25 @@ function extractPosts(raw) {
   if (!Array.isArray(postsArray)) {
     return { posts_returned_count: 0, items: [] };
   }
-
+  //Adding posts items 
   for (const post of postsArray){
     const postNode = post.node ?? post;
+    const rawTags = postNode?.usertags?.in;
+    const tagsArray = Array.isArray(rawTags) ? rawTags : [];
+    const usertags = tagsArray.map((t) => ({
+      username: t?.user?.username ?? null,
+      full_name: t?.user?.full_name ?? null,
+      is_verified: t?.user?.is_verified ?? null,
+      position: t?.position ?? null
+    }));
     items.push({
-      id: postNode?.id ?? null
+      id: postNode?.id ?? null,
+      like_count: postNode?.like_count ?? null,
+      comment_count: postNode?.comment_count ?? null,
+      caption_text: postNode?.caption?.text ?? null,
+      accessibility_caption: postNode?.accessibility_caption ?? null,
+      usertags,
     })
   }
-
   return { posts_returned_count: items.length, items };
-
 }
