@@ -5,3 +5,10 @@
   border-color: aliceblue;
   background-color: white;
 }
+
+.instagramFields {
+  width: fit-content;
+  margin: 24px auto;         
+  display: flex;
+  flex-direction: column;
+}
