@@ -1,16 +1,41 @@
-export function scoreInstagram({ metrics }) {  const reasons = [];
+import { analyzeCaptionsAi } from "./ig.ai.js";
+
+export async function scoreInstagram({ metrics, posts, profile }) {  const reasons = [];
   let score = 0;
   const m = metrics ?? {};
+  const followers = profile?.followers_count;
+  const following = profile?.following_count;
+    const captions = (posts || [])
+    .map(p => p?.caption_text)
+    .filter(Boolean);
 
+  //scpring logics
   score += avgLikes(m, reasons);
   score += avgCom(m, reasons);
   score += friendsTag(m, reasons);
   score += postsCount(m, reasons);
+  score += follows (followers, following, reasons);
+  const captionsResult = await captionsAI(
+  captions,
+  reasons,
+  profile?.username
+);
+  score += captionsResult.score;
 
+  const aiCaptions = captionsResult.ai_captions;
+
+
+  //calculate final score
   if (score < 0) score = 0;
   if (score > 100) score = 100;
-
-  const label = score >= 70 ? "high" : score >= 40 ? "medium" : "low";
+  if (!Number.isFinite(score)) score = 0;
+  score = Math.min(100, Math.max(0, score));
+  score = Math.max(1, Math.ceil(score / 20)); //convert to 1-5 scale
+  const label = score >= 4 ? "high" : score >= 2 ? "medium" : "low";
+    
+  if (reasons.length === 0) {
+    reasons.push("No strong suspicious signals found in recent data");
+    }
 
   return {
     ok: true,
@@ -24,9 +49,33 @@ export function scoreInstagram({ metrics }) {  const reasons = [];
       carousel_posts_count: m.carousel_posts_count ?? null,
       unique_tagged_users_count: m.unique_tagged_users_count ?? null,
     },
+    ai_captions: aiCaptions
   };
 }
 
+/* calculate follwers/folloeing ratio
+    under 0.5 -> score += 20
+    under 1 -> score += 10
+*/
+function follows (followers, following, reasons){
+    let ratio = null;
+    if (typeof followers === "number" && typeof following === "number" && following > 0) {
+    ratio = followers / following;
+    }
+    if (ratio < 0.5) {
+        reasons.push("Very low followers/following ratio");
+        return 20;
+    } else if (ratio < 1) {
+        reasons.push("Low followers/following ratio");
+        return 10;
+    }
+    return 0;
+}
+
+/* avarge likes on posts
+    under 20 -> score += 20
+    under 50 -> score += 10
+*/
 function avgLikes(m, reasons) {
   if (typeof m.average_likes !== "number") return 0;
 
@@ -35,7 +84,7 @@ function avgLikes(m, reasons) {
     return 20;
   }
 
-  if (m.average_likes < 50) {
+  if (m.average_likes < 40) {
     reasons.push("Low average likes");
     return 10;
   }
@@ -43,6 +92,9 @@ function avgLikes(m, reasons) {
   return 0;
 }
 
+/* avarge comments on posts
+    under 2 -> score += 10
+*/
 function avgCom(m, reasons) {
   if (typeof m.average_comments !== "number") return 0;
 
@@ -54,6 +106,9 @@ function avgCom(m, reasons) {
   return 0;
 }
 
+/* How many users tagged on posts
+    0 tags -> score += 5
+*/
 function friendsTag(m, reasons) {
   if (typeof m.unique_tagged_users_count !== "number") return 0;
 
@@ -65,6 +120,10 @@ function friendsTag(m, reasons) {
   return 0;
 }
 
+/* How many posts
+    under 3 -> score += 15
+    under 6 -> score += 8
+*/
 function postsCount(m, reasons) {
   if (typeof m.posts_returned_count !== "number") return 0;
 
@@ -80,3 +139,23 @@ function postsCount(m, reasons) {
 
   return 0;
 }
+
+//AI score for posts's captions - suspiciousness score + resons
+async function captionsAI (captions, reasons, username){
+    console.log("AI enabled?", process.env.AI_CAPTIONS_ENABLED, "captions:", captions.length);
+    let score = 0;
+    const ai = await analyzeCaptionsAi(captions, { username });
+    if (ai) {
+        // suspiciousness: 0..1  => add up to 20 points
+        const add = Math.round((ai.suspiciousness || 0) * 20);
+        score += add;
+
+        // add a couple reasons (short)
+        (ai.reasons || []).slice(0, 3).forEach(r => reasons.push(`Captions: ${r}`));
+    }
+    return {
+        score,
+        ai_captions: ai
+    };
+}
+

@@ -5,6 +5,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import instagramRoutes from "./routes/instagram.routes.js";
 import { connectMongo } from "./src/db/mongoose.js";
+import scoringRoutes from "./routes/scoring.routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,6 +28,8 @@ app.use(cors({
 
 // Use the routes file for all `/ducks` routes
 app.use("/api/instagram", instagramRoutes);
+app.use("/api/scoring", scoringRoutes);
+
 
 // Start server
 await connectMongo();

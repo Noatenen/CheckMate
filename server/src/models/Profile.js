@@ -26,7 +26,14 @@ const ProfileSchema = new mongoose.Schema(
       carousel_posts_count: { type: Number, default: 0 },
       unique_tagged_users_count: { type: Number, default: 0 },
     },
-
+    //Scam score
+    scoring: {
+      score: {type: Number, default: null},
+      label: {type: String, default: null},
+      reasons: {type: [String], default: []},
+      ai_captions: {type: mongoose.Schema.Types.Mixed, default: null},
+      scored_at: {type: Date}
+    },
     last_fetched_at: { type: Date, default: null },
   },
   { timestamps: true }
