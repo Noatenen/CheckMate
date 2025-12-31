@@ -1,0 +1,90 @@
+.section {
+  width: 100%;
+  background: #ebf7ff; /* רקע הקומפוננטה */
+  padding: 70px 0 90px;
+}
+
+.container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px;
+  direction: rtl;
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  font-size: 44px;
+  line-height: 1.05;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin: 18px auto 0;
+  max-width: 760px;
+  font-size: 20px;
+  line-height: 1.6;
+  opacity: 0.75;
+}
+
+.cards {
+  margin-top: 50px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  align-items: stretch;
+}
+
+/* הכרטיסיות */
+.card {
+  background: #b0d2e7; /* צבע הכרטיס */
+  border: 2px dashed #061693; /* גבול */
+  border-radius: 28px;
+  padding: 28px 26px 30px;
+  text-align: right;
+}
+
+/* כותרת + אייקון */
+.cardHeader {
+  display: flex;
+  flex-direction: row-reverse; /* אייקון מימין, טקסט משמאל */
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  direction: rtl; 
+  text-align: center;
+}
+
+.icon {
+  width: 30px;
+  height: 30px;
+  display: block;
+  filter: none;       
+}
+
+/* חשוב: RTL + “עומס” לכותרות */
+.cardTitle {
+  margin: 0;
+  font-family: "Omes", "Rubik", system-ui, sans-serif;
+  color: #000000;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.cardText {
+  margin: 18px 0 0;
+  font-size: 18px;
+  line-height: 1.7;
+  color: #171717;
+  text-align: center;
+}
+
+/* רספונסיביות */
+@media (max-width: 980px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+  .title {
+    font-size: 42px;
+  }
+}

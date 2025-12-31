@@ -1,12 +1,16 @@
-import styles from './Home.module.css';
-import RandomDuck from '../../components/RandomDuck/RandomDuck.jsx';
-
+import styles from "./Home.module.css";
+import NavBar from "../../components/NavBar/NavBar";
+import Hero from "../../components/Hero/Hero";
+import CheckSection from "../../components/CheckSection/CheckSection";
+import Footer from "../../components/Footer/Footer";
 
 const Home = () => {
   return (
     <div className={styles.home}>
-      <h1 className={styles.headline}>Duck It</h1>
-      <RandomDuck />
+      <NavBar />
+      <Hero />
+      <CheckSection />
+      <Footer />
     </div>
   );
 };
