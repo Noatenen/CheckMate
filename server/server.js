@@ -14,6 +14,9 @@ dotenv.config({ path: path.join(__dirname, ".env") });
 console.log("Has MONGODB_URI?", Boolean(process.env.MONGODB_URI));
 
 const app = express();
+console.log("SERVER PID:", process.pid);
+app.get("/health", (req, res) => res.json({ ok: true, pid: process.pid }));
+
 
 app.use(express.json());
 app.use((req, res, next) => {

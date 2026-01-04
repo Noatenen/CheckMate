@@ -42,21 +42,29 @@ router.post("/analyze", async (req, res) => {
       });
     }
 
-    const scoring = scoreInstagram({
-  profile: payload.profile,
-  metrics: payload.metrics,
-});
+    const posts = Array.isArray(payload.posts) ? payload.posts : [];
+    const scoring = await scoreInstagram({
+    profile: payload.profile ?? {},
+    posts: posts ?? [],
+    metrics: payload.metrics ?? {},
+    overrides: {
+        followers_count: followers,
+        following_count: following,
+    },
+    });
 
-return res.json({
-  ok: true,
-  username: cleanUsername,
-  source: payload.meta?.source ?? "db",
-  profile: payload.profile,
-  posts: payload.posts,
-  metrics: payload.metrics ?? {},
-  scam: scoring,
-});
+    const profileOut = { ...(payload.profile ?? {}), scoring };
+    console.log("[analyze] scoring type:", typeof scoring, scoring);
 
+    return res.json({
+    ok: true,
+    username: cleanUsername,
+    source: payload.meta?.source ?? "db",
+    profile: profileOut,
+    posts: payload.posts ?? [],
+    metrics: payload.metrics ?? {},
+    scoring, 
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ ok: false, error: "Server error" });

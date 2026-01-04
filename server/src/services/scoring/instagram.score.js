@@ -3,6 +3,12 @@ import { analyzeCaptionsAi } from "./ig.ai.js";
 export async function scoreInstagram({ metrics, posts, profile }) {  const reasons = [];
   let score = 0;
   const m = metrics ?? {};
+  const postsArr = Array.isArray(posts) ? posts : [];
+  if (postsArr.length === 0) {
+    reasons.push(
+      "No posts available; score is based on profile information only"
+    );
+  }
   const followers = profile?.followers_count;
   const following = profile?.following_count;
     const captions = (posts || [])

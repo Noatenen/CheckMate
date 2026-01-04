@@ -17,11 +17,27 @@ export async function analyzeCaptionsAi(captions, { username } = {}) {
 
   const prompt = [
     "You help detect suspicious Instagram accounts.",
-    "Given captions from recent posts, estimate how suspicious they are (0..1) for being fake/low-authenticity.",
-    "Consider: unnatural repetition, weird grammar, inconsistent voice, spammy promotional patterns.",
-    "Return STRICT JSON with keys: suspiciousness (number 0..1), reasons (array of short strings).",
-    `Username: ${username || "unknown"}`,
-    "Captions:",
+  "Given captions from recent posts, estimate how suspicious they are (0..1) for being fake or low-authenticity.",
+  "Consider indicators such as:",
+  "- unnatural repetition",
+  "- weird or inconsistent grammar",
+  "- inconsistent voice or tone",
+  "- spammy or excessive promotional patterns",
+
+  "IMPORTANT:",
+  "The output is shown directly to an end user (non-technical).",
+  "Write reasons in clear, friendly, and neutral language.",
+  "Do NOT use technical or AI-related terms.",
+  "Do NOT sound judgmental or accusatory.",
+  "Each reason should explain *what was observed*, not *what the model thinks*.",
+  "Reasons should be short, understandable, and customer-facing.",
+
+  "Return STRICT JSON with the following keys only:",
+  "- suspiciousness (number between 0 and 1)",
+  "- reasons (array of short strings)",
+
+  `Username: ${username || "unknown"}`,
+  "Captions:",
     clean.map((c, i) => `${i + 1}. ${c}`).join("\n"),
   ].join("\n");
 

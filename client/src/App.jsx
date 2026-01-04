@@ -1,6 +1,7 @@
-import { BrowserRouter, Routes, Route } from 'react-router'
-import Home from './pages/HomePage/HomePage';
 import styles from './styles/App.module.css';
+import ProfilesAnalyzer from './components/ProfilesAnalyzer/ProfilesAnalyzer';
+import ProfilesScore from './components/ProfilesResults/ProfilesScore'
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
   return (
@@ -12,7 +13,9 @@ function App() {
         </header>
         <main className={styles.main}>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<ProfilesAnalyzer />} />
+            <Route path ="/results" element={<ProfilesScore/>} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
         <footer className={styles.footer}>

@@ -9,6 +9,7 @@ function ProfilesAnalyzer() {
   const [username, setUsername] = useState('');
   const [result, setResult] = useState(null);
 
+
   const canAnalyze = useMemo(() => username.trim().length > 0, [username]);
 
   const handlePlatformSelect = (selectedPlatform) => {
@@ -63,7 +64,7 @@ function ProfilesAnalyzer() {
         return;
       }
 
-      setResult(getData);
+      setResult(analyzeData);
     } catch {
       setLoadingText('Network error');
     }
