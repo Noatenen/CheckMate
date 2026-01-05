@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+
 const UserTagSchema = new mongoose.Schema(
   {
     username: { type: String, default: null },

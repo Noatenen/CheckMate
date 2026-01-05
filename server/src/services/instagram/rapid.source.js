@@ -1,30 +1,22 @@
 
 import axios from "axios";
 
-const KEY = process.env.RAPIDAPI_KEY;
-function assertRapidKey() {
-  if (process.env.MOCK_RAPID === "true") return;
-  if (!process.env.RAPIDAPI_KEY) {
-    throw new Error("Missing RAPIDAPI_KEY in .env (or set MOCK_RAPID=true)");
-  }
-}
 
 const HOST = "instagram-scraper-stable-api.p.rapidapi.com"; 
-
-export const ENDPOINTS =  [
+export const ENDPOINTS =  [/*
   {
     key: "user_data",
     label: "User Data",
     method: "POST",
-    path: "get_ig_user_data",
+    path: "get_ig_user_data.php",
     form: (username) => ({ username_or_url: username }),
     essential: true,
-  },
+  },*/
   {
   key: "user_about",
   label: "User About",
   method: "GET",
-  path: "get_ig_user_about",
+  path: "get_ig_user_about.php",
   params: (username) => ({ username_or_url: username }),
   essential: true,
 },
@@ -32,7 +24,7 @@ export const ENDPOINTS =  [
   key: "user_posts",
   label: "User Posts",
   method: "POST",
-  path: "get_ig_user_posts",
+  path: "get_ig_user_posts.php",
   form: (username) => ({ username_or_url: username }),
   essential: true,
 },
@@ -45,7 +37,17 @@ function urlFor(path) {
 }
 
 export async function callRapid({method, path, params, form}) {
+  console.log("RAPIDAPI_KEY exists?", Boolean(process.env.RAPIDAPI_KEY));
+  console.log("RAPIDAPI_KEY prefix:", process.env.RAPIDAPI_KEY?.slice(0, 6));
+  console.log("HOST:", HOST);
   assertRapidKey();
+  const KEY = process.env.RAPIDAPI_KEY;
+  function assertRapidKey() {
+    if (process.env.MOCK_RAPID === "true") return;
+    if (!process.env.RAPIDAPI_KEY) {
+      throw new Error("Missing RAPIDAPI_KEY in .env (or set MOCK_RAPID=true)");
+    }
+  }
   const isPostForm = method === "POST" && form;
   const res = await axios.request({
     method,
@@ -74,11 +76,12 @@ export async function fetchFromRapid(username) {
   if (!clean) throw new Error("username is required");
 
   const results = {};
+  let hasEssentialFailure = false;
 
   for (const ep of ENDPOINTS) {
     const params = ep.params ? ep.params(clean) : undefined;
     const form = ep.form ? ep.form(clean) : undefined;
-
+    try {
     const r = await callRapid({
       method: ep.method,
       path: ep.path,
@@ -87,7 +90,20 @@ export async function fetchFromRapid(username) {
     });
 
     results[ep.key] = r;
+   if (ep.essential && r.status >= 400) {
+      console.log("[Rapid ERROR]", ep.path, r.status, r.data);
+      hasEssentialFailure = true;
+      break;
+    }
+  } catch (err) {
+     console.log("[Rapid EXCEPTION]", ep.path, err?.message);
+    hasEssentialFailure = true;
+    break;
+  }
   }
 
-  return results;
+  return {
+    ok: !hasEssentialFailure,
+    results,
+  };
 }

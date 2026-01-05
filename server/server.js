@@ -1,8 +1,16 @@
+import fs from "fs";
+import path from "path";
+import dotenv from "dotenv";
+const envPath = path.join(process.cwd(), ".env");
+const raw = fs.readFileSync(envPath, "utf8");
+console.log("ENV has RAPIDAPI_KEY line?", /(^|\n)\s*RAPIDAPI_KEY\s*=/.test(raw));
+dotenv.config({ path: envPath, override: true });
+console.log("Has RAPIDAPI_KEY?", Boolean(process.env.RAPIDAPI_KEY));
+console.log("RAPIDAPI_KEY prefix:", process.env.RAPIDAPI_KEY?.slice(0, 6));
+console.log("MOCK_RAPID:", process.env.MOCK_RAPID);
 import express from 'express';
-import path from 'path';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import instagramRoutes from "./routes/instagram.routes.js";
 import { connectMongo } from "./src/db/mongoose.js";
 import scoringRoutes from "./routes/scoring.routes.js";
@@ -14,8 +22,6 @@ dotenv.config({ path: path.join(__dirname, ".env") });
 console.log("Has MONGODB_URI?", Boolean(process.env.MONGODB_URI));
 
 const app = express();
-console.log("SERVER PID:", process.pid);
-app.get("/health", (req, res) => res.json({ ok: true, pid: process.pid }));
 
 
 app.use(express.json());

@@ -37,7 +37,6 @@ export async function analyzeCaptionsAi(captions, { username } = {}) {
   "- reasons (array of short strings)",
 
   `Username: ${username || "unknown"}`,
-  "Captions:",
     clean.map((c, i) => `${i + 1}. ${c}`).join("\n"),
   ].join("\n");
 

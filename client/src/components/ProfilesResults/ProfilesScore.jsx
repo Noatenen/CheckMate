@@ -36,7 +36,7 @@ export default function ResultsPage() {
 
           {Array.isArray(scoring.reasons) && scoring.reasons.length > 0 && (
             <>
-              <h4>Reasons</h4>
+              <h4>Reasons:</h4>
               <ul>
                 {scoring.reasons.map((r, i) => (
                   <li key={i}>{r}</li>

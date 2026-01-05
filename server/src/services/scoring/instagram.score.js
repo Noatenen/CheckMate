@@ -1,34 +1,38 @@
 import { analyzeCaptionsAi } from "./ig.ai.js";
+import { isAiEnabled } from "../ai/openai.client.js";
 
 export async function scoreInstagram({ metrics, posts, profile }) {  const reasons = [];
   let score = 0;
   const m = metrics ?? {};
   const postsArr = Array.isArray(posts) ? posts : [];
-  if (postsArr.length === 0) {
-    reasons.push(
-      "No posts available; score is based on profile information only"
-    );
-  }
   const followers = profile?.followers_count;
   const following = profile?.following_count;
     const captions = (posts || [])
     .map(p => p?.caption_text)
     .filter(Boolean);
+  let aiCaptions = null;
 
   //scpring logics
-  score += avgLikes(m, reasons);
-  score += avgCom(m, reasons);
-  score += friendsTag(m, reasons);
-  score += postsCount(m, reasons);
+  if (postsArr.length === 0) {
+    reasons.push(
+      "No posts available; score is based on profile information only"
+    );
+  } else {
+    score += avgLikes(m, reasons);
+    score += avgCom(m, reasons);
+    score += friendsTag(m, reasons);
+    score += postsCount(m, reasons);  
+    const captionsResult = await captionsAI(
+      captions,
+      reasons,
+      profile?.username
+    );
+    if (captionsResult){
+      score += captionsResult.score;
+      aiCaptions = captionsResult.ai_captions;
+    }
+  }
   score += follows (followers, following, reasons);
-  const captionsResult = await captionsAI(
-  captions,
-  reasons,
-  profile?.username
-);
-  score += captionsResult.score;
-
-  const aiCaptions = captionsResult.ai_captions;
 
 
   //calculate final score
@@ -55,7 +59,7 @@ export async function scoreInstagram({ metrics, posts, profile }) {  const reaso
       carousel_posts_count: m.carousel_posts_count ?? null,
       unique_tagged_users_count: m.unique_tagged_users_count ?? null,
     },
-    ai_captions: aiCaptions
+    ai_captions: aiCaptions,
   };
 }
 
@@ -66,7 +70,7 @@ export async function scoreInstagram({ metrics, posts, profile }) {  const reaso
 function follows (followers, following, reasons){
     let ratio = null;
     if (typeof followers === "number" && typeof following === "number" && following > 0) {
-    ratio = followers / following;
+    ratio = followers / Math.max(following, 1);
     }
     if (ratio < 0.5) {
         reasons.push("Very low followers/following ratio");
@@ -99,12 +103,12 @@ function avgLikes(m, reasons) {
 }
 
 /* avarge comments on posts
-    under 2 -> score += 15
+    under 5 -> score += 15
 */
 function avgCom(m, reasons) {
   if (typeof m.average_comments !== "number") return 0;
 
-  if (m.average_comments < 2) {
+  if (m.average_comments < 5) {
     reasons.push("Very low average comments");
     return 15;
   }
@@ -148,7 +152,7 @@ function postsCount(m, reasons) {
 
 //AI score for posts's captions - suspiciousness score + resons
 async function captionsAI (captions, reasons, username){
-    console.log("AI enabled?", process.env.AI_CAPTIONS_ENABLED, "captions:", captions.length);
+    console.log("AI enabled?", isAiEnabled(), "captions:", captions.length);
     let score = 0;
     const ai = await analyzeCaptionsAi(captions, { username });
     if (ai) {
