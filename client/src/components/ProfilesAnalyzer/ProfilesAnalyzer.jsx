@@ -71,76 +71,82 @@ function ProfilesAnalyzer() {
   };
 
 
-  return (
-    <div>
-      <h2>Social Profiles Safety Analyzer</h2>
+return (
+  <div className={styles.page}>
+    <div className={styles.card}>
+      <h2 className={styles.title}>Social Profiles Safety Analyzer</h2>
 
       <textarea
+        className={styles.textarea}
         placeholder="Paste username here..."
         value={username}
         onChange={(e) => setUsername(e.target.value)}
       />
 
-      <h3>Which platform?</h3>
-      <button
-        onClick={() => handlePlatformSelect('instagram')}
-        className={styles.Platformbutton}
-      >
-        Instagram
-      </button>
-      <button
-        onClick={() => handlePlatformSelect('facebook')}
-        className={styles.Platformbutton}
-      >
-        Facebook
-      </button>
-      <button
-        onClick={() => handlePlatformSelect('Phone Number')}
-        className={styles.Platformbutton}
-      >
-        Phone Number
-      </button>
-      <button
-        onClick={() => handlePlatformSelect('TikTok')}
-        className={styles.Platformbutton}
-      >
-        TikTok
-      </button>
+      <h3 className={styles.subTitle}>Which platform?</h3>
 
-      {platform === 'instagram' && (
+      <div className={styles.platformRow}>
+        <button
+          type="button"
+          onClick={() => handlePlatformSelect("instagram")}
+          className={`${styles.Platformbutton} ${
+            platform === "instagram" ? styles.selected : ""
+          }`}
+        >
+          Instagram
+        </button>
+
+        <button
+          type="button"
+          onClick={() => handlePlatformSelect("facebook")}
+          className={`${styles.Platformbutton} ${
+            platform === "facebook" ? styles.selected : ""
+          }`}
+        >
+          Facebook
+        </button>
+      </div>
+
+      {platform === "instagram" && (
         <div className={styles.instagramFields}>
           <h4>Instagram details (optional):</h4>
-          <label>
+
+          <label className={styles.fieldLabel}>
             Followers Number:
             <input
+              className={styles.input}
               type="number"
               min="0"
               value={igFollowers}
               onChange={(e) => setFollowers(e.target.value)}
-              placeholder=""
             />
           </label>
-          <label>
+
+          <label className={styles.fieldLabel}>
             Following Number:
             <input
+              className={styles.input}
               type="number"
               min="0"
               value={igFollowing}
               onChange={(e) => setFollowing(e.target.value)}
-              placeholder=""
             />
           </label>
         </div>
       )}
 
-      <br />
-      <br />
-
-      <button onClick={handleAnalyze} disabled={!canAnalyze}>
+      <button
+        className={styles.analyzeBtn}
+        onClick={handleAnalyze}
+        disabled={!canAnalyze}
+        type="button"
+      >
         Analyze
       </button>
 
-      <h6>{loadingText}</h6>
+      <h6 className={styles.status}>{loadingText}</h6>
+    </div>
+    
      {result?.profile?.scoring && (
     <div className={styles.resultBox}>
       <h3>Analysis Result</h3>
