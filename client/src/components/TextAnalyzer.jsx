@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react"; // 1. הסרנו את useEffect כדי למנוע את שגיאת ה-unused-vars
+import PropTypes from "prop-types"; // 2. ייבוא PropTypes כדי להגדיר את onClose
 
 function TextAnalyzer({ onClose }) {
   const [text, setText] = useState("");
@@ -6,10 +7,9 @@ function TextAnalyzer({ onClose }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // פונקציה לעדכון גובה אוטומטי של התיבה
   const handleTextChange = (e) => {
     setText(e.target.value);
-    e.target.style.height = '60px'; // גובה התחלתי נמוך (רבע מהקודם)
+    e.target.style.height = '60px';
     e.target.style.height = `${e.target.scrollHeight}px`;
   };
 
@@ -47,7 +47,7 @@ function TextAnalyzer({ onClose }) {
   return (
     <div style={{
       width: "100%", 
-      maxWidth: "1140px", // הערך הסטנדרטי ליישור עם 3 כרטיסיות (שני את זה ל-1200px אם עדיין חסר קצת)
+      maxWidth: "1140px",
       margin: "0 auto",
       padding: "40px",
       direction: "rtl",
@@ -55,19 +55,18 @@ function TextAnalyzer({ onClose }) {
       borderRadius: "32px",
       border: "2px dashed #3D5A80",
       boxShadow: "0 15px 35px rgba(0,0,0,0.05)",
-      boxSizing: "border-box", // מבטיח שה-Padding לא יגדיל את התיבה מעבר לרוחב המוגדר
+      boxSizing: "border-box",
       position: "relative",
       textAlign: "right"
     }}>
       
-      {/* כפתור סגירה - מחובר ל-prop onClose */}
       <button 
         onClick={onClose}
         type="button"
         style={{
           position: "absolute",
           top: "25px",
-          right: "25px", // העברתי לימין כדי שלא יתנגש עם הטקסט בעברית
+          right: "25px",
           padding: "10px 18px",
           backgroundColor: "#FFFFFF",
           border: "1px solid #E2E8F0",
@@ -83,13 +82,11 @@ function TextAnalyzer({ onClose }) {
         סגירה ✕
       </button>
 
-      {/* כותרות פנימיות */}
       <div style={{ textAlign: "center", marginBottom: "30px" }}>
         <h2 style={{ fontSize: "34px", color: "#1A375D", marginBottom: "8px", fontWeight: "800" }}>ניתוח טקסט חכם</h2>
         <p style={{ color: "#4A5568", fontSize: "18px" }}>הדביקו תוכן כדי לזהות דפוסים חשודים, הונאות או שיח פוגעני</p>
       </div>
 
-      {/* תיבת טקסט - נמוכה ודינמית */}
       <div style={{
         backgroundColor: "#FFFFFF",
         borderRadius: "20px",
@@ -138,7 +135,6 @@ function TextAnalyzer({ onClose }) {
 
       {error && <p style={{ color: "#E53E3E", textAlign: "center", marginTop: "15px" }}>{error}</p>}
 
-      {/* אזור תוצאות */}
       {result && (
         <div style={{
           backgroundColor: "#FFFFFF",
@@ -185,5 +181,10 @@ function TextAnalyzer({ onClose }) {
     </div>
   );
 }
+
+// 🔒 הוספת הגדרת ה-PropTypes כדי למנוע את השגיאה השנייה
+TextAnalyzer.propTypes = {
+  onClose: PropTypes.func.isRequired,
+};
 
 export default TextAnalyzer;
