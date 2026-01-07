@@ -1,4 +1,6 @@
 import { BAD_PATTERNS } from "../data/badWords.he.js";
+import fetch from "node-fetch";
+
 
 /* =========================
    נרמול טקסט (הקוד המקורי שלך)

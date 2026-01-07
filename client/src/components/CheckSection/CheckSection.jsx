@@ -42,13 +42,13 @@ function CheckSection(props) {
           />
 
           <CheckCard
-            title="בדיקת תמונות"
+            title="בדיקת פרופילים"
             text={
               "בדיקת טקסט מתוך תמונות כדי להבין\nדפוסי דיבור ומילים פוגעניות"
             }
             icon={uploadIcon}
-            type="images"
-            isActive={activeType === "images"}
+            type="profiles"
+            isActive={activeType === "profiles"}
             onClick={onSelect}
           />
         </div>

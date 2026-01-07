@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import TextAnalyzer from "../../components/TextAnalyzer";
+import ProfilesAnalyzer from "../../components/ProfilesAnalyzer/ProfilesAnalyzer";
 import styles from "./Home.module.css";
 
 import NavBar from "../../components/NavBar/NavBar";
@@ -35,14 +36,25 @@ export default function HomePage() {
 
       {/* פאנל הבדיקה שמופיע בלחיצה */}
       {activeCheckType === "text" ? (
-        <section 
-          id="check-panel" 
-          className={styles.checkPanel} 
+        <section
+          id="check-panel"
+          className={styles.checkPanel}
           aria-label="אזור בדיקה"
           style={{ width: "100%", padding: "20px 0" }} // הבטחת רוחב מלא ב-container
         >
           {/* אנחנו מעבירים את פונקציית הסגירה כ-prop */}
           <TextAnalyzer onClose={closeCheck} />
+        </section>
+      ) : null}
+
+      {activeCheckType === "profiles" ? (
+        <section
+          id="check-panel"
+          className={styles.checkPanel}
+          aria-label="אזור בדיקת פרופיל"
+          style={{ width: "100%", padding: "20px 0" }}
+        >
+          <ProfilesAnalyzer onClose={closeCheck} />
         </section>
       ) : null}
 
