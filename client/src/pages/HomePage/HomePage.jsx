@@ -2,6 +2,8 @@ import { useState } from "react";
 
 import TextAnalyzer from "../../components/TextAnalyzer";
 import ProfilesAnalyzer from "../../components/ProfilesAnalyzer/ProfilesAnalyzer";
+import LinkCheckerTab from "../../components/LinkCheckerTab";
+
 import styles from "./Home.module.css";
 
 import NavBar from "../../components/NavBar/NavBar";
@@ -10,7 +12,7 @@ import CheckSection from "../../components/CheckSection/CheckSection";
 import Footer from "../../components/Footer/Footer";
 
 export default function HomePage() {
-  var [activeCheckType, setActiveCheckType] = useState(""); // "text" | "links" | "images" | ""
+  var [activeCheckType, setActiveCheckType] = useState(""); // "text" | "links" | "images" | "profiles" | ""
 
   function openCheck(type) {
     setActiveCheckType(type);
@@ -40,10 +42,20 @@ export default function HomePage() {
           id="check-panel"
           className={styles.checkPanel}
           aria-label="אזור בדיקה"
-          style={{ width: "100%", padding: "20px 0" }} // הבטחת רוחב מלא ב-container
+          style={{ width: "100%", padding: "20px 0" }}
         >
-          {/* אנחנו מעבירים את פונקציית הסגירה כ-prop */}
           <TextAnalyzer onClose={closeCheck} />
+        </section>
+      ) : null}
+
+      {activeCheckType === "links" ? (
+        <section
+          id="check-panel"
+          className={styles.checkPanel}
+          aria-label="אזור בדיקת לינקים"
+          style={{ width: "100%", padding: "20px 0" }}
+        >
+          <LinkCheckerTab onClose={closeCheck} />
         </section>
       ) : null}
 
@@ -58,7 +70,7 @@ export default function HomePage() {
         </section>
       ) : null}
 
-      {/* הערה: אם בעתיד תוסיפו לינקים/תמונות, תוכלו להוסיף כאן תנאים נוספים */}
+      {/* הערה: אם בעתיד תוסיפו תמונות, תוכלו להוסיף כאן תנאים נוספים */}
 
       <Footer />
     </div>
