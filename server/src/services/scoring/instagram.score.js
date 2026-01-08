@@ -15,7 +15,7 @@ export async function scoreInstagram({ metrics, posts, profile }) {  const reaso
   //scpring logics
   if (postsArr.length === 0) {
     reasons.push(
-      "No posts available; score is based on profile information only"
+      "אין פוסטים זמינים. הניקוד מתבסס על נתונים מהפרופיל בלבד"
     );
   } else {
     score += avgLikes(m, reasons);
@@ -44,7 +44,7 @@ export async function scoreInstagram({ metrics, posts, profile }) {  const reaso
   const label = score >= 4 ? "high" : score >= 2 ? "medium" : "low";
     
   if (reasons.length === 0) {
-    reasons.push("No strong suspicious signals found in recent data");
+    reasons.push("לא נמצאו נתונים חשודים");
     }
 
   return {
@@ -73,10 +73,10 @@ function follows (followers, following, reasons){
     ratio = followers / Math.max(following, 1);
     }
     if (ratio < 0.5) {
-        reasons.push("Very low followers/following ratio");
+        reasons.push("יש לפרופיל ממש מעט עוקבים והוא עוקב אחרי הרבה אנשים");
         return 20;
     } else if (ratio < 1) {
-        reasons.push("Low followers/following ratio");
+        reasons.push("יש לפרופיל מעט עוקבים והוא עוקב אחרי די הרבה אנשים ");
         return 10;
     }
     return 0;
@@ -90,12 +90,12 @@ function avgLikes(m, reasons) {
   if (typeof m.average_likes !== "number") return 0;
 
   if (m.average_likes < 20) {
-    reasons.push("Very low average likes");
+    reasons.push("ממוצע לייקים נמוך מאוד");
     return 22;
   }
 
   if (m.average_likes < 40) {
-    reasons.push("Low average likes");
+    reasons.push("ממוצע לייקים די נמוך");
     return 10;
   }
 
@@ -109,7 +109,7 @@ function avgCom(m, reasons) {
   if (typeof m.average_comments !== "number") return 0;
 
   if (m.average_comments < 5) {
-    reasons.push("Very low average comments");
+    reasons.push("ממוצע תגובות נמוך מאוד");
     return 15;
   }
 
@@ -123,7 +123,7 @@ function friendsTag(m, reasons) {
   if (typeof m.unique_tagged_users_count !== "number") return 0;
 
   if (m.unique_tagged_users_count === 0) {
-    reasons.push("No tagged users in recent posts");
+    reasons.push("אין חברים מתויגים בפוסטים");
     return 8;
   }
 
@@ -138,12 +138,12 @@ function postsCount(m, reasons) {
   if (typeof m.posts_returned_count !== "number") return 0;
 
   if (m.posts_returned_count < 3) {
-    reasons.push("Very few recent posts available");
+    reasons.push("מעט מאוד פוסטים");
     return 15;
   }
 
   if (m.posts_returned_count < 6) {
-    reasons.push("Few recent posts available");
+    reasons.push("קצת פוסטים");
     return 8;
   }
 
@@ -161,7 +161,7 @@ async function captionsAI (captions, reasons, username){
         score += add;
 
         // add a couple reasons (short)
-        (ai.reasons || []).slice(0, 3).forEach(r => reasons.push(`Captions: ${r}`));
+        (ai.reasons || []).slice(0, 3).forEach(r => reasons.push(`${r}`));
     }
     return {
         score,

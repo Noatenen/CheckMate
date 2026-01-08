@@ -26,7 +26,7 @@ export async function analyzeCaptionsAi(captions, { username } = {}) {
 
   "IMPORTANT:",
   "The output is shown directly to an end user (non-technical).",
-  "Write reasons in clear, friendly, and neutral language.",
+  "Write reasons in clear, friendly, and neutral language. in Hebrew! Do not use any word in English.",
   "Do NOT use technical or AI-related terms.",
   "Do NOT sound judgmental or accusatory.",
   "Each reason should explain *what was observed*, not *what the model thinks*.",

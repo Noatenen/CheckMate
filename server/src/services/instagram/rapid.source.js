@@ -3,8 +3,8 @@ import axios from "axios";
 
 
 const HOST = "instagram-scraper-stable-api.p.rapidapi.com"; 
-export const ENDPOINTS =  [/*
-  {
+export const ENDPOINTS =  [
+  /*{
     key: "user_data",
     label: "User Data",
     method: "POST",
