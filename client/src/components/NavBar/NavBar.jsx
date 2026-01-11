@@ -1,11 +1,13 @@
 import styles from "./NavBar.module.css";
+import logo from "../../assets/images/logo_check-mate.png";
+
 
 export default function NavBar() {
   return (
     <header className={styles.nav}>
       <div className={styles.inner}>
         <div className={styles.logo}>
-          LOGO
+          <img src={logo} alt="Check-Mate Logo" className={styles.logoImage} />
         </div>
 
         <nav className={styles.links}>

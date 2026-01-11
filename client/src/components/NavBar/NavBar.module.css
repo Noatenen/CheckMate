@@ -39,3 +39,9 @@
 .link:hover{
   color: var(--blue-primary);
 }
+
+.logoImage {
+  height: 100px; /* או כל גובה שמתאים לעיצוב שלך */
+  width: auto;  /* שומר על פרופורציות */
+  display: block;
+}
