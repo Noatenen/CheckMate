@@ -29,7 +29,6 @@ function ProfilesAnalyzer({ onClose }) {
     }
 
     try {
-      // המרה למספרים רק אם הוזן ערך
       const bodyPayload = {
         username: username.trim(),
         followers_count: igFollowers ? Number(igFollowers) : undefined,
@@ -44,7 +43,6 @@ function ProfilesAnalyzer({ onClose }) {
 
       const data = await res.json();
 
-      // תמיכה במקרי קצה של שגיאות
       if (!res.ok || (data.ok === false)) {
         throw new Error(data.error || "שגיאה בניתוח הפרופיל");
       }
@@ -58,55 +56,28 @@ function ProfilesAnalyzer({ onClose }) {
     }
   }
 
-  // --- פונקציית עזר: נרמול הנתונים ---
   const getUnifiedResult = (data) => {
     if (!data) return null;
-
     const coreData = data.scoring || data.profile?.scoring || data;
-
     const score = Number(coreData.score || 0);
     const reasons = coreData.reasons || [];
     const aiData = data.ai_captions || coreData.ai_captions;
 
-    return {
-        score: score,
-        reasons: reasons,
-        aiData: aiData
-    };
+    return { score, reasons, aiData };
   };
 
   const displayData = getUnifiedResult(result);
 
-  // --- לוגיקת עיצוב לפי דירוג 1-5 ---
   const getTheme = (score) => {
-    if (score >= 4) {
-      return { 
-        color: "#FF4D4D", 
-        icon: "🚨", 
-        status: "פרופיל בסיכון גבוה", 
-        bg: "#FFF5F5" 
-      };
-    }
-    if (score >= 2.6) { 
-      return { 
-        color: "#FFC107", 
-        icon: "⚠️", 
-        status: "פרופיל חשוד", 
-        bg: "#FFFBEB" 
-      };
-    }
-    return { 
-      color: "#2ECC71", 
-      icon: "✅", 
-      status: "נראה אמין", 
-      bg: "#F0FFF4" 
-    };
+    if (score >= 4) return { color: "#FF4D4D", icon: "🚨", status: "פרופיל בסיכון גבוה", bg: "#FFF5F5" };
+    if (score >= 2.6) return { color: "#FFC107", icon: "⚠️", status: "פרופיל חשוד", bg: "#FFFBEB" };
+    return { color: "#2ECC71", icon: "✅", status: "נראה אמין", bg: "#F0FFF4" };
   };
 
   const theme = displayData ? getTheme(displayData.score) : { color: "#3D5A80" };
 
   return (
-    <div style={{
+    <div id="analyzer-wrapper" style={{
       width: "100%", 
       maxWidth: "1140px",
       margin: "0 auto",
@@ -118,7 +89,8 @@ function ProfilesAnalyzer({ onClose }) {
       boxShadow: "0 15px 35px rgba(0,0,0,0.05)",
       boxSizing: "border-box",
       position: "relative",
-      textAlign: "right"
+      textAlign: "right",
+      fontFamily: "'Rubik', sans-serif" 
     }}>
       
       {onClose && (
@@ -126,19 +98,11 @@ function ProfilesAnalyzer({ onClose }) {
           onClick={onClose}
           type="button"
           style={{
-            position: "absolute",
-            top: "25px",
-            right: "25px",
-            padding: "10px 18px",
-            backgroundColor: "#FFFFFF",
-            border: "1px solid #E2E8F0",
-            borderRadius: "12px",
-            cursor: "pointer",
-            fontSize: "15px",
-            color: "#4A5568",
-            fontWeight: "bold",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
-            zIndex: 10
+            position: "absolute", top: "25px", right: "25px", padding: "10px 18px",
+            backgroundColor: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "12px",
+            cursor: "pointer", fontSize: "15px", color: "#4A5568", fontWeight: "bold",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.05)", zIndex: 10,
+            fontFamily: "'Rubik', sans-serif" // <-- הוספתי ישירות
           }}
         >
           סגירה ✕
@@ -146,7 +110,13 @@ function ProfilesAnalyzer({ onClose }) {
       )}
 
       <div style={{ textAlign: "center", marginBottom: "30px" }}>
-        <h2 style={{ fontSize: "34px", color: "#1A375D", marginBottom: "8px", fontWeight: "800" }}>
+        <h2 style={{ 
+            fontSize: "34px", 
+            color: "#1A375D", 
+            marginBottom: "8px", 
+            fontWeight: "800",
+            fontFamily: "sans-serif" 
+        }}>
             בדיקת פרופיל מתחזה
         </h2>
         <p style={{ color: "#4A5568", fontSize: "18px" }}>
@@ -155,25 +125,19 @@ function ProfilesAnalyzer({ onClose }) {
       </div>
 
       <div style={{
-        backgroundColor: "#FFFFFF",
-        borderRadius: "24px",
-        padding: "30px",
-        marginBottom: "20px",
-        border: "1px solid #E2E8F0"
+        backgroundColor: "#FFFFFF", borderRadius: "24px", padding: "30px", marginBottom: "20px", border: "1px solid #E2E8F0"
       }}>
         
         <div style={{ display: "flex", gap: "15px", marginBottom: "20px", justifyContent: "center" }}>
             <button 
                 onClick={() => setPlatform("instagram")}
                 style={{
-                    padding: "10px 20px",
-                    borderRadius: "12px",
+                    padding: "10px 20px", borderRadius: "12px",
                     border: platform === "instagram" ? "2px solid #E1306C" : "1px solid #CBD5E0",
                     backgroundColor: platform === "instagram" ? "#FFF5F8" : "white",
                     color: platform === "instagram" ? "#E1306C" : "#4A5568",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                    fontSize: "16px"
+                    fontWeight: "bold", cursor: "pointer", fontSize: "16px",
+                    fontFamily: "'Rubik', sans-serif" // <-- הוספתי ישירות
                 }}
             >
                 Instagram 📸
@@ -181,14 +145,12 @@ function ProfilesAnalyzer({ onClose }) {
             <button 
                 onClick={() => setPlatform("facebook")}
                 style={{
-                    padding: "10px 20px",
-                    borderRadius: "12px",
+                    padding: "10px 20px", borderRadius: "12px",
                     border: platform === "facebook" ? "2px solid #1877F2" : "1px solid #CBD5E0",
                     backgroundColor: platform === "facebook" ? "#E7F3FF" : "white",
                     color: platform === "facebook" ? "#1877F2" : "#4A5568",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                    fontSize: "16px"
+                    fontWeight: "bold", cursor: "pointer", fontSize: "16px",
+                    fontFamily: "'Rubik', sans-serif" // <-- הוספתי ישירות
                 }}
             >
                 Facebook (בקרוב)
@@ -202,18 +164,10 @@ function ProfilesAnalyzer({ onClose }) {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           style={{
-            width: "100%",
-            height: "50px",
-            padding: "0 15px",
-            borderRadius: "12px",
-            border: "1px solid #CBD5E0",
-            fontSize: "18px",
-            outline: "none",
-            color: "#2D3748",
-            direction: "ltr",
-            textAlign: "left",
-            marginBottom: "20px",
-            boxSizing: "border-box"
+            width: "100%", height: "50px", padding: "0 15px", borderRadius: "12px",
+            border: "1px solid #CBD5E0", fontSize: "18px", outline: "none", color: "#2D3748",
+            direction: "ltr", textAlign: "left", marginBottom: "20px", boxSizing: "border-box",
+            fontFamily: "'Rubik', sans-serif" // <-- הוספתי ישירות
           }}
         />
 
@@ -222,28 +176,24 @@ function ProfilesAnalyzer({ onClose }) {
                 <div style={{ flex: 1 }}>
                     <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", color: "#718096" }}>מספר עוקבים (Followers):</label>
                     <input
-                        type="number"
-                        min="0"
-                        placeholder="לדוגמה: 150"
-                        value={igFollowers}
+                        type="number" min="0" placeholder="לדוגמה: 150" value={igFollowers}
                         onChange={(e) => setFollowers(e.target.value)}
                         style={{
                             width: "100%", height: "45px", padding: "0 10px", borderRadius: "10px",
-                            border: "1px solid #CBD5E0", fontSize: "16px", outline: "none", boxSizing: "border-box"
+                            border: "1px solid #CBD5E0", fontSize: "16px", outline: "none", boxSizing: "border-box",
+                            fontFamily: "'Rubik', sans-serif" // <-- הוספתי ישירות
                         }}
                     />
                 </div>
                 <div style={{ flex: 1 }}>
                     <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", color: "#718096" }}>מספר נעקבים (Following):</label>
                     <input
-                        type="number"
-                        min="0"
-                        placeholder="לדוגמה: 300"
-                        value={igFollowing}
+                        type="number" min="0" placeholder="לדוגמה: 300" value={igFollowing}
                         onChange={(e) => setFollowing(e.target.value)}
                         style={{
                             width: "100%", height: "45px", padding: "0 10px", borderRadius: "10px",
-                            border: "1px solid #CBD5E0", fontSize: "16px", outline: "none", boxSizing: "border-box"
+                            border: "1px solid #CBD5E0", fontSize: "16px", outline: "none", boxSizing: "border-box",
+                            fontFamily: "'Rubik', sans-serif" // <-- הוספתי ישירות
                         }}
                     />
                 </div>
@@ -255,17 +205,12 @@ function ProfilesAnalyzer({ onClose }) {
         onClick={handleAnalyze} 
         disabled={!canAnalyze || loading}
         style={{
-          width: "100%",
-          padding: "20px",
-          backgroundColor: "#4A90E2",
-          color: "white",
-          border: "none",
-          borderRadius: "16px",
-          fontSize: "20px",
-          fontWeight: "bold",
+          width: "100%", padding: "20px", backgroundColor: "#4A90E2", color: "white",
+          border: "none", borderRadius: "16px", fontSize: "20px", fontWeight: "bold",
           cursor: !canAnalyze || loading ? "not-allowed" : "pointer",
           opacity: !canAnalyze || loading ? 0.7 : 1,
-          boxShadow: "0 6px 15px rgba(74, 144, 226, 0.2)"
+          boxShadow: "0 6px 15px rgba(74, 144, 226, 0.2)",
+          fontFamily: "'Rubik', sans-serif" // <-- הוספתי ישירות
         }}
       >
         {loading ? "מבצע ניתוח פרופיל..." : "בצע בדיקה"}
@@ -275,13 +220,9 @@ function ProfilesAnalyzer({ onClose }) {
 
       {displayData && (
         <div style={{
-          backgroundColor: "#FFFFFF",
-          borderRadius: "24px",
-          padding: "30px",
-          border: `2px solid ${theme.color}`,
-          marginTop: "30px",
-          boxShadow: "0 8px 25px rgba(0,0,0,0.05)",
-          animation: "fadeIn 0.4s ease-out"
+          backgroundColor: "#FFFFFF", borderRadius: "24px", padding: "30px",
+          border: `2px solid ${theme.color}`, marginTop: "30px",
+          boxShadow: "0 8px 25px rgba(0,0,0,0.05)", animation: "fadeIn 0.4s ease-out"
         }}>
           
           <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "20px" }}>
@@ -299,12 +240,8 @@ function ProfilesAnalyzer({ onClose }) {
           <div style={{ marginBottom: "20px" }}>
             <h4 style={{ fontSize: "17px", color: "#2D3748", marginBottom: "8px", fontWeight: "700" }}>ניתוח המערכת:</h4>
             <div style={{ 
-                backgroundColor: "#F8FAFC", 
-                padding: "20px", 
-                borderRadius: "15px", 
-                fontSize: "17px", 
-                color: "#1A365D", 
-                border: "1px solid #E2E8F0" 
+                backgroundColor: "#F8FAFC", padding: "20px", borderRadius: "15px", 
+                fontSize: "17px", color: "#1A365D", border: "1px solid #E2E8F0" 
             }}>
                 {Array.isArray(displayData.reasons) && displayData.reasons.length > 0 ? (
                     <ul style={{ paddingRight: "20px", margin: 0 }}>
@@ -320,11 +257,8 @@ function ProfilesAnalyzer({ onClose }) {
 
           {displayData.aiData && displayData.aiData.suspiciousness > 0.5 && (
             <div style={{
-                marginTop: "15px",
-                padding: "15px",
-                backgroundColor: "#FFF5F5",
-                borderRadius: "12px",
-                border: "1px solid #FECACA"
+                marginTop: "15px", padding: "15px", backgroundColor: "#FFF5F5",
+                borderRadius: "12px", border: "1px solid #FECACA"
             }}>
                 <strong style={{color: "#C53030"}}>🤖 ניתוח טקסט בפוסטים:</strong>
                 <p style={{margin: "5px 0 0 0", fontSize: "15px", color: "#742A2A"}}>
@@ -335,7 +269,10 @@ function ProfilesAnalyzer({ onClose }) {
 
         </div>
       )}
-      <style>{` @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } `}</style>
+      
+      <style>{` 
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      `}</style>
     </div>
   );
 }

@@ -60,4 +60,5 @@
   color: #1d1d1d;
   white-space: pre-line; /* זה מה שמכבד את \n */
   text-align: center; /* “למרכז רק את הטקסט עצמו” */
+  font-family: 'Rubik', sans-serif;
 }

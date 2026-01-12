@@ -23,7 +23,6 @@ function TextAnalyzer({ onClose }) {
     setLoading(true);
 
     try {
-      // הנחת עבודה: השרת רץ בפורט 4000
       const resp = await fetch("http://localhost:4000/api/moderate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -42,33 +41,10 @@ function TextAnalyzer({ onClose }) {
     }
   }
 
-  // --- לוגיקת עיצוב חדשה לפי דירוג 1-5 ---
   const getTheme = (score) => {
-    // 4-5: סכנה
-    if (score >= 4) {
-      return { 
-        color: "#FF4D4D", 
-        icon: "🚨", 
-        status: "זוהתה סכנה", 
-        bg: "#FFF5F5" 
-      };
-    }
-    // 3: חשוד
-    if (score >= 2.6) { // מותאם ללוגיקה בשרת (מעל 2.6 זה כבר suspicious)
-      return { 
-        color: "#FFC107", 
-        icon: "⚠️", 
-        status: "חשוב להיזהר", 
-        bg: "#FFFBEB" 
-      };
-    }
-    // 1-2.5: בטוח / סיכון נמוך
-    return { 
-      color: "#2ECC71", 
-      icon: "✅", 
-      status: "הכל נראה בטוח", 
-      bg: "#F0FFF4" 
-    };
+    if (score >= 4) return { color: "#FF4D4D", icon: "🚨", status: "זוהתה סכנה", bg: "#FFF5F5" };
+    if (score >= 2.6) return { color: "#FFC107", icon: "⚠️", status: "חשוב להיזהר", bg: "#FFFBEB" };
+    return { color: "#2ECC71", icon: "✅", status: "הכל נראה בטוח", bg: "#F0FFF4" };
   };
 
   const theme = result ? getTheme(result.score) : { color: "#3D5A80" };
@@ -86,59 +62,49 @@ function TextAnalyzer({ onClose }) {
       boxShadow: "0 15px 35px rgba(0,0,0,0.05)",
       boxSizing: "border-box",
       position: "relative",
-      textAlign: "right"
+      textAlign: "right",
+      // --- הוספתי כאן את הפונט הראשי ---
+      fontFamily: "'Rubik', sans-serif"
     }}>
       
       <button 
         onClick={onClose}
         type="button"
         style={{
-          position: "absolute",
-          top: "25px",
-          right: "25px",
-          padding: "10px 18px",
-          backgroundColor: "#FFFFFF",
-          border: "1px solid #E2E8F0",
-          borderRadius: "12px",
-          cursor: "pointer",
-          fontSize: "15px",
-          color: "#4A5568",
-          fontWeight: "bold",
-          boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
-          zIndex: 10
+          position: "absolute", top: "25px", right: "25px", padding: "10px 18px",
+          backgroundColor: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "12px",
+          cursor: "pointer", fontSize: "15px", color: "#4A5568", fontWeight: "bold",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.05)", zIndex: 10,
+          fontFamily: "'Rubik', sans-serif" // גם לכפתור סגירה
         }}
       >
         סגירה ✕
       </button>
 
       <div style={{ textAlign: "center", marginBottom: "30px" }}>
-        <h2 style={{ fontSize: "34px", color: "#1A375D", marginBottom: "8px", fontWeight: "800" }}>ניתוח טקסט חכם</h2>
+        {/* --- החרגתי את הכותרת (שתהיה בפונט המקורי) --- */}
+        <h2 style={{ 
+            fontSize: "34px", color: "#1A375D", marginBottom: "8px", fontWeight: "800",
+            fontFamily: "sans-serif" 
+        }}>
+            ניתוח טקסט חכם
+        </h2>
         <p style={{ color: "#4A5568", fontSize: "18px" }}>הדביקו תוכן כדי לזהות דפוסים חשודים, הונאות או שיח פוגעני</p>
       </div>
 
       <div style={{
-        backgroundColor: "#FFFFFF",
-        borderRadius: "20px",
-        padding: "20px",
-        marginBottom: "20px",
-        border: "1px solid #E2E8F0"
+        backgroundColor: "#FFFFFF", borderRadius: "20px", padding: "20px", marginBottom: "20px", border: "1px solid #E2E8F0"
       }}>
         <textarea
           placeholder="הדביקו כאן את התוכן לבדיקה..."
           value={text}
           onChange={handleTextChange}
           style={{
-            width: "100%",
-            minHeight: "60px",
-            height: "60px",
-            border: "none",
-            fontSize: "19px",
-            outline: "none",
-            resize: "none",
-            fontFamily: "inherit",
-            color: "#2D3748",
-            lineHeight: "1.5",
-            overflow: "hidden"
+            width: "100%", minHeight: "60px", height: "60px", border: "none",
+            fontSize: "19px", outline: "none", resize: "none",
+            color: "#2D3748", lineHeight: "1.5", overflow: "hidden",
+            // --- הוספתי כאן את הפונט לתיבת הטקסט ---
+            fontFamily: "'Rubik', sans-serif"
           }}
         />
       </div>
@@ -147,16 +113,11 @@ function TextAnalyzer({ onClose }) {
         onClick={analyzeText} 
         disabled={loading}
         style={{
-          width: "100%",
-          padding: "20px",
-          backgroundColor: "#4A90E2",
-          color: "white",
-          border: "none",
-          borderRadius: "16px",
-          fontSize: "20px",
-          fontWeight: "bold",
-          cursor: "pointer",
-          boxShadow: "0 6px 15px rgba(74, 144, 226, 0.2)"
+          width: "100%", padding: "20px", backgroundColor: "#4A90E2", color: "white",
+          border: "none", borderRadius: "16px", fontSize: "20px", fontWeight: "bold",
+          cursor: "pointer", boxShadow: "0 6px 15px rgba(74, 144, 226, 0.2)",
+          // --- הוספתי כאן את הפונט לכפתור הראשי ---
+          fontFamily: "'Rubik', sans-serif"
         }}
       >
         {loading ? "סורק..." : "נתחו את התוכן עכשיו"}
@@ -166,13 +127,9 @@ function TextAnalyzer({ onClose }) {
 
       {result && (
         <div style={{
-          backgroundColor: "#FFFFFF",
-          borderRadius: "24px",
-          padding: "30px",
-          border: `2px solid ${theme.color}`,
-          marginTop: "30px",
-          boxShadow: "0 8px 25px rgba(0,0,0,0.05)",
-          animation: "fadeIn 0.4s ease-out"
+          backgroundColor: "#FFFFFF", borderRadius: "24px", padding: "30px",
+          border: `2px solid ${theme.color}`, marginTop: "30px",
+          boxShadow: "0 8px 25px rgba(0,0,0,0.05)", animation: "fadeIn 0.4s ease-out"
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "20px" }}>
             <span style={{ fontSize: "45px" }}>{theme.icon}</span>
@@ -180,7 +137,6 @@ function TextAnalyzer({ onClose }) {
               <h3 style={{ margin: 0, fontSize: "26px", color: theme.color, fontWeight: "800" }}>
                 {theme.status}
               </h3>
-              {/* כאן השינוי העיקרי בתצוגה ל-1 עד 5 */}
               <p style={{ margin: 0, color: "#718096", fontSize: "16px", fontWeight: "600" }}>
                  דירוג סיכון: <span style={{ color: theme.color, fontSize: "20px" }}>{result.score}</span> / 5
               </p>
@@ -190,12 +146,8 @@ function TextAnalyzer({ onClose }) {
           <div style={{ marginBottom: "20px" }}>
             <h4 style={{ fontSize: "17px", color: "#2D3748", marginBottom: "8px", fontWeight: "700" }}>ניתוח המערכת:</h4>
             <div style={{ 
-                backgroundColor: "#F8FAFC", 
-                padding: "20px", 
-                borderRadius: "15px", 
-                fontSize: "17px", 
-                color: "#1A365D", 
-                border: "1px solid #E2E8F0" 
+                backgroundColor: "#F8FAFC", padding: "20px", borderRadius: "15px", 
+                fontSize: "17px", color: "#1A365D", border: "1px solid #E2E8F0" 
             }}>
               {result.explanation}
             </div>
@@ -203,11 +155,8 @@ function TextAnalyzer({ onClose }) {
 
           {result.recommendation && (
             <div style={{
-              backgroundColor: theme.bg, // משתמשים ברקע העדין שהגדרנו ב-theme
-              padding: "20px",
-              borderRadius: "15px",
-              borderRight: `6px solid ${theme.color}`,
-              display: "flex", gap: "15px", alignItems: "flex-start"
+              backgroundColor: theme.bg, padding: "20px", borderRadius: "15px",
+              borderRight: `6px solid ${theme.color}`, display: "flex", gap: "15px", alignItems: "flex-start"
             }}>
               <span style={{ fontSize: "22px" }}>💡</span>
               <div>

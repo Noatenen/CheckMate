@@ -7,22 +7,14 @@ const SCORE_WEIGHTS = {
     virusTotal: 0.2,
     ai: 0.3,
 };
+
 export const checkLink = async (req, res) => {
     try {
         const { url } = req.body;
         if (!url) {
             return res.status(400).json({ error: "URL is requested" });
         }
-        //     // הודעת דמו קבועה לבינתיים
-        //     return res.json({
-        //     verdict: "suspicious",
-        //     score: 55,
-        //     reasons: [
-        //       "Shortened URL detected",
-        //       "Contains suspicious keyword: login"
-        //     ],
-        //     recommendation: "Verify the sender before clicking"
-        //   });
+
         const heuristics = runHeuristics(url);
         const virusTotal = await checkVirusTotal(url);
         const ai = await askOpenAI(url);
@@ -42,8 +34,10 @@ export const checkLink = async (req, res) => {
             Math.min(5, Math.max(1, finalScore)).toFixed(1)
         );
 
-        //verdict categories
-        let verdict = "unknown";
+        // --- כאן השינוי הגדול: תרגום הקטגוריות וההמלצות לעברית ---
+        
+        let verdict = "unknown"; // זה משתנה טכני, אפשר להשאיר באנגלית אם הקליינט משתמש בזה לצבעים
+        // אבל ההמלצה (recommendation) חייבת להיות בעברית
 
         if (roundedScore < 1.6) verdict = "safe";
         else if (roundedScore < 2.6) verdict = "low risk";
@@ -53,19 +47,19 @@ export const checkLink = async (req, res) => {
 
         let recommendation = "";
         if (roundedScore < 1.6) {
-            recommendation = "This link appears safe, but always verify the sender.";
+            recommendation = "הקישור נראה בטוח, אך תמיד מומלץ לוודא את זהות השולח.";
         }
         else if (roundedScore < 2.6) {
-            recommendation = "Low-risk link. Avoid entering personal information unless trusted.";
+            recommendation = "סיכון נמוך. הימנע מהזנת פרטים אישיים אלא אם האתר מוכר לך.";
         }
         else if (roundedScore < 3.6) {
-            recommendation = "Be cautious. Check the sender and avoid logging in via this link.";
+            recommendation = "היה זהיר. בדוק את השולח והימנע מהתחברות (Login) דרך קישור זה.";
         }
         else if (roundedScore < 4.6) {
-            recommendation = "High risk. Do NOT enter credentials. Verify with the organization directly.";
+            recommendation = "סיכון גבוה! אל תזין פרטי התחברות. וודא מול הארגון ישירות.";
         }
         else {
-            recommendation = "Severe risk. Avoid clicking and report this as phishing.";
+            recommendation = "סכנה חמורה. המנע מללחוץ על הקישור ודווח עליו כפישינג.";
         }
 
         const reasons = [
@@ -91,7 +85,7 @@ export const checkLink = async (req, res) => {
     }
 }
 
-// ---------- Basic Heuristics ----------
+// ---------- Basic Heuristics (Translated) ----------
 function runHeuristics(url) {
     let score = 1;
     const reasons = [];
@@ -99,7 +93,7 @@ function runHeuristics(url) {
     //1) HTTPS check
     if (!url.startsWith("https://")) {
         score += 3.0;
-        reasons.push("Connection is not secure (HTTPS missing)");
+        reasons.push("החיבור אינו מאובטח (חסר HTTPS)");
     }
 
     //2) Suspicious keywords
@@ -107,7 +101,7 @@ function runHeuristics(url) {
     suspiciousWords.forEach((word) => {
         if (url.toLowerCase().includes(word)) {
             score += 3.0;
-            reasons.push(`Contains suspicious keyword: ${word}`);
+            reasons.push(`הכתובת מכילה מילה חשודה: ${word}`);
         }
     });
 
@@ -115,13 +109,13 @@ function runHeuristics(url) {
     const shorteners = ["bit.ly", "tinyurl.com", "t.co", "goo.gl", "ow.ly"];
     if (shorteners.some((s) => url.includes(s))) {
         score += 3.0;
-        reasons.push("Shortened URL detected");
+        reasons.push("זוהה קישור מקוצר (מוסתר)");
     }
 
     // 4) Weird characters
     if (/[^\w\-.:/?&=#]/.test(url)) {
         score += 3.0;
-        reasons.push("URL contains unusual characters");
+        reasons.push("הכתובת מכילה תווים יוצאי דופן");
     }
 
     // clamp score to [1,5] and return
@@ -129,7 +123,7 @@ function runHeuristics(url) {
     return { score, reasons };
 }
 
-// ---------- VirusTotal Assessment ----------
+// ---------- VirusTotal Assessment (Translated) ----------
 async function checkVirusTotal(url) {
     const apiKey = process.env.VIRUSTOTAL_API_KEY;
 
@@ -177,12 +171,12 @@ async function checkVirusTotal(url) {
         if (detections >= 1) {
             score = 5;
             reasons.push(
-                "VirusTotal: One or more security vendors reported this URL as malicious and potentially harmful."
+                "VirusTotal: מנוע אבטחה אחד או יותר דיווח על הקישור כמסוכן."
             );
         } else {
             score = 1;
             reasons.push(
-                "VirusTotal: no engines reported this URL as malicious."
+                "VirusTotal: לא נמצאו דיווחים על הקישור במנועי האבטחה."
             );
         }
 
@@ -194,7 +188,7 @@ async function checkVirusTotal(url) {
     }
 }
 
-// ---------- AI Risk Assessment ----------
+// ---------- AI Risk Assessment (Prompt Fix) ----------
 async function askOpenAI(url) {
     if (!process.env.OPENAI_API_KEY) return null;
 
@@ -210,18 +204,14 @@ async function askOpenAI(url) {
                     role: "system",
                     content: `
 You are a cybersecurity assistant.
-Rate the risk level of a URL from 1 to 5:
-1 = safe
-2 = slightly suspicious
-3 = suspicious
-4 = dangerous
-5 = very dangerous
+Rate the risk level of a URL from 1 to 5.
 
 Important:
 - Base your answer ONLY on the URL string.
 - Do NOT sound alarming.
 - Be calm and educational.
 - Return JSON only.
+- **The "reasons" array MUST be written in Hebrew.**
 `
                 },
                 {
@@ -230,7 +220,7 @@ Important:
 Analyze this URL and return JSON like:
 {
  "score": number,
- "reasons": ["short explanation", "another reason"]
+ "reasons": ["short explanation in Hebrew", "another reason in Hebrew"]
 }
 
 URL: ${url}
@@ -255,4 +245,3 @@ URL: ${url}
         return null;
     }
 }
-

@@ -32,33 +32,10 @@ function LinkCheckerTab() {
     }
   }
 
-  // --- לוגיקת עיצוב לפי דירוג 1-5 ---
   const getTheme = (score) => {
-    // 4-5: סכנה
-    if (score >= 4) {
-      return { 
-        color: "#FF4D4D", 
-        icon: "🚨", 
-        status: "לינק מסוכן!", 
-        bg: "#FFF5F5" 
-      };
-    }
-    // 2.6-3.9: חשוד
-    if (score >= 2.6) { 
-      return { 
-        color: "#FFC107", 
-        icon: "⚠️", 
-        status: "חשוב להיזהר", 
-        bg: "#FFFBEB" 
-      };
-    }
-    // 1-2.5: בטוח
-    return { 
-      color: "#2ECC71", 
-      icon: "✅", 
-      status: "הלינק נראה בטוח", 
-      bg: "#F0FFF4" 
-    };
+    if (score >= 4) return { color: "#FF4D4D", icon: "🚨", status: "לינק מסוכן!", bg: "#FFF5F5" };
+    if (score >= 2.6) return { color: "#FFC107", icon: "⚠️", status: "חשוב להיזהר", bg: "#FFFBEB" };
+    return { color: "#2ECC71", icon: "✅", status: "הלינק נראה בטוח", bg: "#F0FFF4" };
   };
 
   const theme = result ? getTheme(result.score) : { color: "#3D5A80" };
@@ -76,11 +53,17 @@ function LinkCheckerTab() {
       boxShadow: "0 15px 35px rgba(0,0,0,0.05)",
       boxSizing: "border-box",
       position: "relative",
-      textAlign: "right"
+      textAlign: "right",
+      // --- הוספתי כאן את הפונט הראשי ---
+      fontFamily: "'Rubik', sans-serif"
     }}>
 
       <div style={{ textAlign: "center", marginBottom: "30px" }}>
-        <h2 style={{ fontSize: "34px", color: "#1A375D", marginBottom: "8px", fontWeight: "800" }}>
+        {/* --- החרגתי את הכותרת (שתהיה בפונט המקורי) --- */}
+        <h2 style={{ 
+            fontSize: "34px", color: "#1A375D", marginBottom: "8px", fontWeight: "800",
+            fontFamily: "sans-serif"
+        }}>
             בדיקת לינקים חשודים
         </h2>
         <p style={{ color: "#4A5568", fontSize: "18px" }}>
@@ -101,15 +84,10 @@ function LinkCheckerTab() {
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           style={{
-            width: "100%",
-            height: "50px",
-            border: "none",
-            fontSize: "19px",
-            outline: "none",
-            fontFamily: "inherit",
-            color: "#2D3748",
-            direction: "ltr", // חשוב ללינקים באנגלית
-            textAlign: "left"
+            width: "100%", height: "50px", border: "none", fontSize: "19px", outline: "none",
+            color: "#2D3748", direction: "ltr", textAlign: "left",
+            // --- הוספתי כאן את הפונט לאינפוט ---
+            fontFamily: "'Rubik', sans-serif"
           }}
         />
       </div>
@@ -118,17 +96,13 @@ function LinkCheckerTab() {
         onClick={handleClick} 
         disabled={!url || loading}
         style={{
-          width: "100%",
-          padding: "20px",
-          backgroundColor: "#4A90E2",
-          color: "white",
-          border: "none",
-          borderRadius: "16px",
-          fontSize: "20px",
-          fontWeight: "bold",
+          width: "100%", padding: "20px", backgroundColor: "#4A90E2", color: "white",
+          border: "none", borderRadius: "16px", fontSize: "20px", fontWeight: "bold",
           cursor: !url || loading ? "not-allowed" : "pointer",
           opacity: !url || loading ? 0.7 : 1,
-          boxShadow: "0 6px 15px rgba(74, 144, 226, 0.2)"
+          boxShadow: "0 6px 15px rgba(74, 144, 226, 0.2)",
+          // --- הוספתי כאן את הפונט לכפתור ---
+          fontFamily: "'Rubik', sans-serif"
         }}
       >
         {loading ? "מבצעים סריקה..." : "בדיקת לינק"}
@@ -138,15 +112,10 @@ function LinkCheckerTab() {
 
       {result && (
         <div style={{
-          backgroundColor: "#FFFFFF",
-          borderRadius: "24px",
-          padding: "30px",
-          border: `2px solid ${theme.color}`,
-          marginTop: "30px",
-          boxShadow: "0 8px 25px rgba(0,0,0,0.05)",
-          animation: "fadeIn 0.4s ease-out"
+          backgroundColor: "#FFFFFF", borderRadius: "24px", padding: "30px",
+          border: `2px solid ${theme.color}`, marginTop: "30px",
+          boxShadow: "0 8px 25px rgba(0,0,0,0.05)", animation: "fadeIn 0.4s ease-out"
         }}>
-          {/* כותרת תוצאה */}
           <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "20px" }}>
             <span style={{ fontSize: "45px" }}>{theme.icon}</span>
             <div>
@@ -159,16 +128,11 @@ function LinkCheckerTab() {
             </div>
           </div>
 
-          {/* רשימת סיבות / ניתוח */}
           <div style={{ marginBottom: "20px" }}>
             <h4 style={{ fontSize: "17px", color: "#2D3748", marginBottom: "8px", fontWeight: "700" }}>ממצאים:</h4>
             <div style={{ 
-                backgroundColor: "#F8FAFC", 
-                padding: "20px", 
-                borderRadius: "15px", 
-                fontSize: "17px", 
-                color: "#1A365D", 
-                border: "1px solid #E2E8F0" 
+                backgroundColor: "#F8FAFC", padding: "20px", borderRadius: "15px", 
+                fontSize: "17px", color: "#1A365D", border: "1px solid #E2E8F0" 
             }}>
                 {Array.isArray(result.reasons) && result.reasons.length > 0 ? (
                     <ul style={{ paddingRight: "20px", margin: 0 }}>
@@ -182,14 +146,10 @@ function LinkCheckerTab() {
             </div>
           </div>
 
-          {/* המלצה */}
           {result.recommendation && (
             <div style={{
-              backgroundColor: theme.bg,
-              padding: "20px",
-              borderRadius: "15px",
-              borderRight: `6px solid ${theme.color}`,
-              display: "flex", gap: "15px", alignItems: "flex-start"
+              backgroundColor: theme.bg, padding: "20px", borderRadius: "15px",
+              borderRight: `6px solid ${theme.color}`, display: "flex", gap: "15px", alignItems: "flex-start"
             }}>
               <span style={{ fontSize: "22px" }}>💡</span>
               <div>
