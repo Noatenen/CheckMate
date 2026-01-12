@@ -1,4 +1,5 @@
 import { BAD_PATTERNS } from "../data/badWords.he.js";
+import fetch from "node-fetch";
 
 /* =========================
    נרמול טקסט (ללא שינוי)
@@ -12,7 +13,7 @@ function normalizeText(str) {
   return s;
 }
 
-function findBadWords(text) {
+export function findBadWords(text) {
   const clean = normalizeText(text);
   const found = [];
   for (const pattern of BAD_PATTERNS) {
@@ -27,7 +28,7 @@ function findBadWords(text) {
    פונקציית ניתוח עמוק - AI
    עדכון: הציון כעת הוא 1-5
    ============================================== */
-async function getDeepAIAnalysis(text) {
+export async function getDeepAIAnalysis(text) {
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",

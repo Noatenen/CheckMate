@@ -3,6 +3,7 @@ import { useState } from "react";
 import TextAnalyzer from "../../components/TextAnalyzer";
 import ProfilesAnalyzer from "../../components/ProfilesAnalyzer/ProfilesAnalyzer";
 import LinkCheckerTab from "../../components/LinkCheckerTab";
+import PicAnalyzer from "../../components/PicAnalyzer";
 
 import styles from "./Home.module.css";
 
@@ -67,6 +68,17 @@ export default function HomePage() {
           style={{ width: "100%", padding: "20px 0" }}
         >
           <ProfilesAnalyzer onClose={closeCheck} />
+        </section>
+      ) : null}
+
+      {activeCheckType === "pictures" ? (
+        <section
+          id="check-panel"
+          className={styles.checkPanel}
+          aria-label="אזור בדיקת תמונות"
+          style={{ width: "100%", padding: "20px 0" }}
+        >
+          <PicAnalyzer onClose={closeCheck} />
         </section>
       ) : null}
 

@@ -91,9 +91,12 @@ function getRecommendation(score) {
     under 0.5 -> score += 20
     under 1 -> score += 10
 */
-function follows(followers, following, reasons) {
-  let ratio = null;
-  if (typeof followers === "number" && typeof following === "number" && following > 0) {
+function follows (followers, following, reasons){
+    let ratio = null;
+    if (followers == null || following == null) {
+      return 0;
+    }
+    if (typeof followers === "number" && typeof following === "number" && following > 0) {
     ratio = followers / Math.max(following, 1);
   }
   if (ratio < 0.5) {
