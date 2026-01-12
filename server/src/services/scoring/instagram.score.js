@@ -1,18 +1,19 @@
 import { analyzeCaptionsAi } from "./ig.ai.js";
 import { isAiEnabled } from "../ai/openai.client.js";
 
-export async function scoreInstagram({ metrics, posts, profile }) {  const reasons = [];
+export async function scoreInstagram({ metrics, posts, profile }) {
+  const reasons = [];
   let score = 0;
   const m = metrics ?? {};
   const postsArr = Array.isArray(posts) ? posts : [];
   const followers = profile?.followers_count;
   const following = profile?.following_count;
-    const captions = (posts || [])
+  const captions = (posts || [])
     .map(p => p?.caption_text)
     .filter(Boolean);
   let aiCaptions = null;
 
-  //scpring logics
+  // scoring logics
   if (postsArr.length === 0) {
     reasons.push(
       "לא נמצאו פוסטים, הציון מבוסס על נתונים מהפרופיל"
@@ -21,37 +22,44 @@ export async function scoreInstagram({ metrics, posts, profile }) {  const reaso
     score += avgLikes(m, reasons);
     score += avgCom(m, reasons);
     score += friendsTag(m, reasons);
-    score += postsCount(m, reasons);  
+    score += postsCount(m, reasons);
     const captionsResult = await captionsAI(
       captions,
       reasons,
       profile?.username
     );
-    if (captionsResult){
+    if (captionsResult) {
       score += captionsResult.score;
       aiCaptions = captionsResult.ai_captions;
     }
   }
-  score += follows (followers, following, reasons);
+  score += follows(followers, following, reasons);
 
 
-  //calculate final score
+  // calculate final score
   if (score < 0) score = 0;
   if (score > 100) score = 100;
   if (!Number.isFinite(score)) score = 0;
   score = Math.min(100, Math.max(0, score));
-  score = Math.max(1, Math.ceil(score / 20)); //convert to 1-5 scale
+  
+  // המרה לסולם 1-5
+  score = Math.max(1, Math.ceil(score / 20)); 
+  
   const label = score >= 4 ? "high" : score >= 2 ? "medium" : "low";
-    
+
   if (reasons.length === 0) {
     reasons.push("לפי הבדיקה שלנו, לא נמצאו סימנים חשודים");
-    }
+  }
+
+  // === חדש: קבלת ההמלצה לפי הציון הסופי ===
+  const recommendation = getRecommendation(score);
 
   return {
     ok: true,
     score,
     label,
     reasons,
+    recommendation, // === חדש: הוספנו את זה לאובייקט החוזר ===
     features: {
       average_likes: m.average_likes ?? null,
       average_comments: m.average_comments ?? null,
@@ -63,23 +71,39 @@ export async function scoreInstagram({ metrics, posts, profile }) {  const reaso
   };
 }
 
+// === פונקציית העזר החדשה להמלצות ===
+function getRecommendation(score) {
+  // ציון 4 או 5 - סיכון גבוה
+  if (score >= 4) {
+    return "מומלץ לחסום את המשתמש ולדווח לאינסטגרם. הפרופיל מציג סימנים מובהקים של התחזות.";
+  }
+  // ציון 3 - חשוד (בינוני)
+  if (score >= 3) {
+    return "יש לנקוט במשנה זהירות. מומלץ לא למסור פרטים אישיים ולא ללחוץ על קישורים חשודים.";
+  }
+  // ציון 1 או 2 - תקין
+  return "הפרופיל נראה תקין, אך תמיד כדאי להישאר ערניים ברשת.";
+}
+
+// --- שאר פונקציות העזר (ללא שינוי) ---
+
 /* calculate follwers/folloeing ratio
     under 0.5 -> score += 20
     under 1 -> score += 10
 */
-function follows (followers, following, reasons){
-    let ratio = null;
-    if (typeof followers === "number" && typeof following === "number" && following > 0) {
+function follows(followers, following, reasons) {
+  let ratio = null;
+  if (typeof followers === "number" && typeof following === "number" && following > 0) {
     ratio = followers / Math.max(following, 1);
-    }
-    if (ratio < 0.5) {
-        reasons.push("החשבון הזה עוקב אחרי המון אנשים, אבל כמעט אף אחד לא עוקב אחריו בחזרה. זה קורה הרבה בפרופילים לא אמיתיים.");
-        return 20;
-    } else if (ratio < 1) {
-        reasons.push("נראה שיש כאן הרבה יותר נעקבים מעוקבים, שווה לבדוק אם מדובר במישהו שאתם באמת מכירים.");
-        return 10;
-    }
-    return 0;
+  }
+  if (ratio < 0.5) {
+    reasons.push("החשבון הזה עוקב אחרי המון אנשים, אבל כמעט אף אחד לא עוקב אחריו בחזרה. זה קורה הרבה בפרופילים לא אמיתיים.");
+    return 20;
+  } else if (ratio < 1) {
+    reasons.push("נראה שיש כאן הרבה יותר נעקבים מעוקבים, שווה לבדוק אם מדובר במישהו שאתם באמת מכירים.");
+    return 10;
+  }
+  return 0;
 }
 
 /* avarge likes on posts
@@ -151,24 +175,23 @@ function postsCount(m, reasons) {
 }
 
 //AI score for posts's captions - suspiciousness score + reasons
-async function captionsAI (captions, reasons, username){
-    console.log("AI enabled?", isAiEnabled(), "captions:", captions.length);
-    let score = 0;
-    const ai = await analyzeCaptionsAi(captions, { username });
-    if (ai) {
-        // suspiciousness: 0..1  => add up to 20 points
-        const add = Math.round((ai.suspiciousness || 0) * 20);
-        score += add;
+async function captionsAI(captions, reasons, username) {
+  console.log("AI enabled?", isAiEnabled(), "captions:", captions.length);
+  let score = 0;
+  const ai = await analyzeCaptionsAi(captions, { username });
+  if (ai) {
+    // suspiciousness: 0..1  => add up to 20 points
+    const add = Math.round((ai.suspiciousness || 0) * 20);
+    score += add;
 
-        // add a couple reason
-        if (ai?.reason) {
-        reasons.push(`Captions: ${ai.reason}`);
-      }
-
+    // add a couple reason
+    if (ai?.reason) {
+      reasons.push(`Captions: ${ai.reason}`);
     }
-    return {
-        score,
-        ai_captions: ai
-    };
-}
 
+  }
+  return {
+    score,
+    ai_captions: ai
+  };
+}

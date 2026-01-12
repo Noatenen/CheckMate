@@ -61,20 +61,24 @@ function ProfilesAnalyzer({ onClose }) {
     const coreData = data.scoring || data.profile?.scoring || data;
     const score = Number(coreData.score || 0);
     const reasons = coreData.reasons || [];
+    // === שינוי 1: חילוץ ההמלצה ===
+    const recommendation = coreData.recommendation || ""; 
     const aiData = data.ai_captions || coreData.ai_captions;
 
-    return { score, reasons, aiData };
+    return { score, reasons, aiData, recommendation };
   };
 
   const displayData = getUnifiedResult(result);
 
   const getTheme = (score) => {
+    // === שינוי 2: הוספנו bg (רקע) לכל צבע ===
     if (score >= 4) return { color: "#FF4D4D", icon: "🚨", status: "פרופיל בסיכון גבוה", bg: "#FFF5F5" };
     if (score >= 2.6) return { color: "#FFC107", icon: "⚠️", status: "פרופיל חשוד", bg: "#FFFBEB" };
     return { color: "#2ECC71", icon: "✅", status: "נראה אמין", bg: "#F0FFF4" };
   };
 
-  const theme = displayData ? getTheme(displayData.score) : { color: "#3D5A80" };
+  // הוספתי ברירת מחדל לרקע למקרה הצורך
+  const theme = displayData ? getTheme(displayData.score) : { color: "#3D5A80", bg: "#FFFFFF" };
 
   return (
     <div id="analyzer-wrapper" style={{
@@ -102,7 +106,7 @@ function ProfilesAnalyzer({ onClose }) {
             backgroundColor: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "12px",
             cursor: "pointer", fontSize: "15px", color: "#4A5568", fontWeight: "bold",
             boxShadow: "0 2px 6px rgba(0,0,0,0.05)", zIndex: 10,
-            fontFamily: "'Rubik', sans-serif" // <-- הוספתי ישירות
+            fontFamily: "'Rubik', sans-serif"
           }}
         >
           סגירה ✕
@@ -114,7 +118,7 @@ function ProfilesAnalyzer({ onClose }) {
             fontSize: "34px", 
             color: "#1A375D", 
             marginBottom: "8px", 
-            fontWeight: "normal", // בפונטים מיוחדים לפעמים עדיף normal
+            fontWeight: "normal",
             fontFamily: "'Omes', sans-serif"
         }}>
             בדיקת פרופיל מתחזה
@@ -137,7 +141,7 @@ function ProfilesAnalyzer({ onClose }) {
                     backgroundColor: platform === "instagram" ? "#FFF5F8" : "white",
                     color: platform === "instagram" ? "#E1306C" : "#4A5568",
                     fontWeight: "bold", cursor: "pointer", fontSize: "16px",
-                    fontFamily: "'Rubik', sans-serif" // <-- הוספתי ישירות
+                    fontFamily: "'Rubik', sans-serif"
                 }}
             >
                 Instagram 📸
@@ -150,7 +154,7 @@ function ProfilesAnalyzer({ onClose }) {
                     backgroundColor: platform === "facebook" ? "#E7F3FF" : "white",
                     color: platform === "facebook" ? "#1877F2" : "#4A5568",
                     fontWeight: "bold", cursor: "pointer", fontSize: "16px",
-                    fontFamily: "'Rubik', sans-serif" // <-- הוספתי ישירות
+                    fontFamily: "'Rubik', sans-serif"
                 }}
             >
                 Facebook (בקרוב)
@@ -167,7 +171,7 @@ function ProfilesAnalyzer({ onClose }) {
             width: "100%", height: "50px", padding: "0 15px", borderRadius: "12px",
             border: "1px solid #CBD5E0", fontSize: "18px", outline: "none", color: "#2D3748",
             direction: "ltr", textAlign: "left", marginBottom: "20px", boxSizing: "border-box",
-            fontFamily: "'Rubik', sans-serif" // <-- הוספתי ישירות
+            fontFamily: "'Rubik', sans-serif"
           }}
         />
 
@@ -181,7 +185,7 @@ function ProfilesAnalyzer({ onClose }) {
                         style={{
                             width: "100%", height: "45px", padding: "0 10px", borderRadius: "10px",
                             border: "1px solid #CBD5E0", fontSize: "16px", outline: "none", boxSizing: "border-box",
-                            fontFamily: "'Rubik', sans-serif" // <-- הוספתי ישירות
+                            fontFamily: "'Rubik', sans-serif"
                         }}
                     />
                 </div>
@@ -193,7 +197,7 @@ function ProfilesAnalyzer({ onClose }) {
                         style={{
                             width: "100%", height: "45px", padding: "0 10px", borderRadius: "10px",
                             border: "1px solid #CBD5E0", fontSize: "16px", outline: "none", boxSizing: "border-box",
-                            fontFamily: "'Rubik', sans-serif" // <-- הוספתי ישירות
+                            fontFamily: "'Rubik', sans-serif"
                         }}
                     />
                 </div>
@@ -210,7 +214,7 @@ function ProfilesAnalyzer({ onClose }) {
           cursor: !canAnalyze || loading ? "not-allowed" : "pointer",
           opacity: !canAnalyze || loading ? 0.7 : 1,
           boxShadow: "0 6px 15px rgba(74, 144, 226, 0.2)",
-          fontFamily: "'Rubik', sans-serif" // <-- הוספתי ישירות
+          fontFamily: "'Rubik', sans-serif"
         }}
       >
         {loading ? "מבצע ניתוח פרופיל..." : "בצע בדיקה"}
@@ -254,6 +258,31 @@ function ProfilesAnalyzer({ onClose }) {
                 )}
             </div>
           </div>
+
+          {/* === שינוי 3: קוביית ההמלצה המעוצבת === */}
+          {displayData.recommendation && (
+            <div style={{
+              marginTop: "20px", 
+              marginBottom: "20px",
+              padding: "20px", 
+              backgroundColor: theme.bg, // רקע דינמי
+              borderRadius: "15px", 
+              borderRight: `5px solid ${theme.color}`, // גבול דינמי
+              display: "flex",
+              alignItems: "flex-start",
+              gap: "12px"
+            }}>
+              <span style={{ fontSize: "24px" }}>💡</span>
+              <div>
+                  <h4 style={{ margin: "0 0 5px 0", fontSize: "18px", color: theme.color, fontWeight: "bold" }}>
+                    המלצה לפעולה:
+                  </h4>
+                  <p style={{ margin: 0, fontSize: "16px", color: "#2D3748", lineHeight: "1.5" }}>
+                    {displayData.recommendation}
+                  </p>
+              </div>
+            </div>
+          )}
 
           {displayData.aiData && displayData.aiData.suspiciousness > 0.5 && (
             <div style={{
