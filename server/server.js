@@ -10,6 +10,7 @@ import instagramRoutes from "./routes/instagram.routes.js";
 import scoringRoutes from "./routes/scoring.routes.js";
 import linkCheckerRoutes from "./routes/linkChecker.js";
 import { connectMongo } from "./src/db/mongoose.js";
+import ocrServiceRouter from "./routes/ocrService.js"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -64,6 +65,7 @@ app.use("/api/link", linkCheckerRoutes);
 app.use("/api", moderationRoutes);
 app.use("/api/instagram", instagramRoutes);
 app.use("/api/scoring", scoringRoutes);
+app.use("/api/ocr", ocrServiceRouter);
 
 /* =========================
    Health check

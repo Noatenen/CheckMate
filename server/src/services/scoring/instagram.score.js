@@ -69,6 +69,9 @@ export async function scoreInstagram({ metrics, posts, profile }) {  const reaso
 */
 function follows (followers, following, reasons){
     let ratio = null;
+    if (followers == null || following == null) {
+      return 0;
+    }
     if (typeof followers === "number" && typeof following === "number" && following > 0) {
     ratio = followers / Math.max(following, 1);
     }

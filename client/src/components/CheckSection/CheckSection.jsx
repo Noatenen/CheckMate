@@ -51,6 +51,17 @@ function CheckSection(props) {
             isActive={activeType === "profiles"}
             onClick={onSelect}
           />
+
+          <CheckCard
+            title="בדיקת תמונות"
+            text={
+              " בדיקת תוכן בצילומי מסך לזיהוי תוכן פוגעני, הונאות וסימנים לבריונות ברשת"
+            }
+            icon={uploadIcon}
+            type="pictures"
+            isActive={activeType === "pictures"}
+            onClick={onSelect}
+          />
         </div>
       </div>
     </section>
