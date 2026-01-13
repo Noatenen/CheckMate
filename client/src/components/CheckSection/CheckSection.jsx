@@ -5,6 +5,7 @@ import CheckCard from "./CheckCard";
 import uploadIcon from "../../assets/images/upload.svg";
 import linkIcon from "../../assets/images/link.svg";
 import messageIcon from "../../assets/images/message.svg";
+import imgIcon from "../../assets/images/img-icon.png"; // הייבוא החדש
 
 function CheckSection(props) {
   var onSelect = props.onSelect;
@@ -19,50 +20,42 @@ function CheckSection(props) {
         </p>
 
         <div className={styles.grid}>
-          <CheckCard
-            title="ניתוח טקסט"
-            text={
-              "בדיקת הודעות, פוסטים ומיילים\nלזיהוי קללות, שיח פוגעני,\nנסיונות הונאה וסימנים לבריונות ברשת"
-            }
-            icon={messageIcon}
-            type="text"
-            isActive={activeType === "text"}
-            onClick={onSelect}
-          />
+  <CheckCard
+    title="ניתוח טקסט"
+    text="בדיקת הודעות, פוסטים ומיילים לזיהוי קללות, שיח פוגעני, נסיונות הונאה וסימנים לבריונות ברשת"
+    icon={messageIcon}
+    type="text"
+    isActive={activeType === "text"}
+    onClick={onSelect}
+  />
 
-          <CheckCard
-            title="בדיקת לינקים"
-            text={
-              "בדיקה האם הקישור בטוח לפני\nשלוחצים עליו\n(פישינג, אתרים חשודים, התחזות)"
-            }
-            icon={linkIcon}
-            type="links"
-            isActive={activeType === "links"}
-            onClick={onSelect}
-          />
+  <CheckCard
+    title="בדיקת לינקים"
+    text="בדיקה האם הקישור בטוח לפני שלוחצים עליו (פישינג, אתרים חשודים, התחזות)"
+    icon={linkIcon}
+    type="links"
+    isActive={activeType === "links"}
+    onClick={onSelect}
+  />
 
-          <CheckCard
-            title="בדיקת פרופילים"
-            text={
-              " בדיקה חכמה של פרופילים ברשתות חברתיות\n כדי לזהות חשבונות שנראים לא אמיתיים או חריגים"
-            }
-            icon={uploadIcon}
-            type="profiles"
-            isActive={activeType === "profiles"}
-            onClick={onSelect}
-          />
+  <CheckCard
+    title="בדיקת פרופילים"
+    text="בדיקה חכמה של פרופילים ברשתות חברתיות כדי לזהות חשבונות שנראים לא אמיתיים או חריגים"
+    icon={uploadIcon}
+    type="profiles"
+    isActive={activeType === "profiles"}
+    onClick={onSelect}
+  />
 
-          <CheckCard
-            title="בדיקת תמונות"
-            text={
-              " בדיקת תוכן בצילומי מסך לזיהוי תוכן פוגעני, הונאות וסימנים לבריונות ברשת"
-            }
-            icon={uploadIcon}
-            type="pictures"
-            isActive={activeType === "pictures"}
-            onClick={onSelect}
-          />
-        </div>
+  <CheckCard
+    title="בדיקת תמונות"
+    text="בדיקת תוכן בצילומי מסך לזיהוי תוכן פוגעני, הונאות וסימנים לבריונות ברשת"
+    icon={imgIcon}
+    type="pictures"
+    isActive={activeType === "pictures"}
+    onClick={onSelect}
+  />
+</div>
       </div>
     </section>
   );

@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import PropTypes from "prop-types";
+import imgIcon from "../assets/images/img-icon.png"; // וודאי שהנתיב נכון לפי מבנה התיקיות שלך
 
 function PicAnalyzer({ onClose }) {
   const [result, setResult] = useState(null);

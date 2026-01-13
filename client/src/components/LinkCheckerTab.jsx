@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-function LinkCheckerTab() {
-  const [url, setUrl] = useState("");
+function LinkCheckerTab({ onClose }) {
+    const [url, setUrl] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -57,6 +57,14 @@ function LinkCheckerTab() {
       // --- הוספתי כאן את הפונט הראשי ---
       fontFamily: "'Rubik', sans-serif"
     }}>
+            {/* כפתור סגירה */}
+      <button onClick={onClose} type="button" style={{
+          position: "absolute", top: "25px", right: "25px", padding: "10px 18px",
+          backgroundColor: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "12px",
+          cursor: "pointer", fontSize: "15px", color: "#4A5568", fontWeight: "bold"
+        }}>
+        סגירה ✕
+      </button>
 
       <div style={{ textAlign: "center", marginBottom: "30px" }}>
         {/* --- החרגתי את הכותרת (שתהיה בפונט המקורי) --- */}

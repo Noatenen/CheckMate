@@ -2,28 +2,25 @@ import PropTypes from "prop-types";
 import styles from "./CheckCard.module.css";
 
 export default function CheckCard(props) {
-  var title = props.title;
-  var text = props.text;
-  var icon = props.icon;
-  var type = props.type;
-  var isActive = props.isActive;
-  var onClick = props.onClick;
+  const { title, text, icon, type, isActive, onClick } = props;
 
   function handleClick() {
     if (onClick) onClick(type);
   }
 
-  var cardClass = styles.card;
-  if (isActive) cardClass = styles.card + " " + styles.active;
+  // חיבור הקלאסים - אם אקטיבי, מוסיף את הסטייל של ה-active
+  const cardClass = `${styles.card} ${isActive ? styles.active : ""}`;
 
   return (
     <button type="button" className={cardClass} onClick={handleClick}>
       <div className={styles.head}>
-        <img className={styles.icon} src={icon} alt="" />
+        <img className={styles.icon} src={icon} alt={title} />
         <h3 className={styles.cardTitle}>{title}</h3>
       </div>
 
       <p className={styles.cardText}>{text}</p>
+      
+      {isActive && <div className={styles.indicator}>בחור</div>}
     </button>
   );
 }
