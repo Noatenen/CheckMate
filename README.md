@@ -1,13 +1,13 @@
-# BeSafe 🛡️ | Full-Stack Digital Safety Platform
+# CheckMate 🛡️ | Full-Stack Digital Safety Platform
 
-BeSafe is a full-stack web platform developed as part of the **QueenB × AppsFlyer Hackathon 2026**.  
+CheckMate is a full-stack web platform developed as part of the **QueenB × AppsFlyer Hackathon 2026**.  
 The system provides real-time tools for analyzing digital content and identifying online safety risks such as harassment, phishing, and deceptive behavior.
 
 ---
 
 ## The Mission
 
-In an era of increasing online threats, BeSafe aims to empower users with a centralized hub for evaluating digital content.  
+In an era of increasing online threats, CheckMate aims to empower users with a centralized hub for evaluating digital content.  
 The platform enables users to analyze **text, links, and images** and receive clear risk feedback that supports safer online decision-making.
 
 ---
@@ -93,4 +93,4 @@ Contains the Node.js / Express backend application.
 ### Clone the Repository
 ```bash
 git clone <your-repository-url>
-cd BeSafe
+cd CheckMate
